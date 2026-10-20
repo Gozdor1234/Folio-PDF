@@ -21,6 +21,15 @@ from folio.signature import DrawCanvas, qimage_to_png, render_typed, trim_transp
 from tests.make_fixture import build  # noqa: E402
 
 faulthandler.dump_traceback_later(int(os.environ.get("HANG_TIMEOUT", "0")) or 10**6, exit=True)
+if os.environ.get("GITHUB_ACTIONS"):
+    import traceback
+
+    def _annotate(exc_type, exc, tb):
+        text = "".join(traceback.format_exception(exc_type, exc, tb)).replace("\n", "%0A")
+        print(f"::error title=Uncaught exception::{text}", flush=True)
+        sys.__excepthook__(exc_type, exc, tb)
+
+    sys.excepthook = _annotate
 out = sys.argv[1]
 os.makedirs(out, exist_ok=True)
 src = os.path.join(out, "form.pdf")
@@ -43,6 +52,8 @@ def check(cond, msg):
     print(("PASS " if cond else "FAIL ") + msg)
     if not cond:
         failures.append(msg)
+        if os.environ.get("GITHUB_ACTIONS"):
+            print(f"::error title=Test failed::{msg}")
 
 
 eds = {ed.meta.field_name + (f":{ed.meta.xref}" if isinstance(ed, CheckEditor) and ed.radio else ""): ed
