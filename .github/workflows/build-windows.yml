@@ -1,0 +1,48 @@
+name: Build Windows app
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Build
+        run: pyinstaller folio.spec --noconfirm --clean
+
+      - name: Zip
+        shell: pwsh
+        run: Compress-Archive -Path dist/FolioPDF -DestinationPath FolioPDF-windows.zip
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: FolioPDF-windows
+          path: FolioPDF-windows.zip
+
+      # runs after the upload so a test failure still leaves a downloadable build, but turns the run red
+      - name: End-to-end tests (offscreen)
+        env:
+          QT_QPA_PLATFORM: offscreen
+          HANG_TIMEOUT: "120"
+        run: python tests/test_gui.py test-out
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: FolioPDF-windows.zip
