@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Folio PDF</title>
+<link rel="icon" href="__ICON__">
+<style>
+__CSS__
+</style>
+</head>
+<body>
+<div id="toolbar">
+  <button id="openBtn" title="Open a PDF (Ctrl+O)">Open</button>
+  <button id="saveBtn" data-needs-doc title="Save (Ctrl+S)">Save</button>
+  <button id="saveAsBtn" data-needs-doc title="Save a copy (Ctrl+Shift+S)">Save As</button>
+  <button id="printBtn" data-needs-doc title="Print (Ctrl+P)">Print</button>
+  <span class="sep"></span>
+  <span class="label">Page</span>
+  <input id="pageNum" type="number" min="1" value="1" data-needs-doc>
+  <span id="pageCount" class="label">/ 0</span>
+  <span class="sep"></span>
+  <button id="zoomOut" data-needs-doc title="Zoom out (Ctrl+-)">−</button>
+  <span id="zoomLabel">100%</span>
+  <button id="zoomIn" data-needs-doc title="Zoom in (Ctrl+=)">+</button>
+  <button id="fitWidth" data-needs-doc title="Fit width (Ctrl+0)">Fit width</button>
+  <button id="fitPage" data-needs-doc title="Fit page">Fit page</button>
+  <span class="sep"></span>
+  <button id="signBtn" data-needs-doc title="Place a signature or initials">Sign ▾</button>
+  <button id="textBtn" data-needs-doc title="Click on the page and type (Ctrl+T). For forms without fillable fields.">Add text</button>
+  <input id="textSize" type="number" min="5" max="48" step="1" value="11" data-needs-doc title="Font size (pt) for new text">
+  <span class="label">pt</span>
+  <span id="saveState"></span>
+  <span class="spacer"></span>
+  <button id="findBtn" data-needs-doc title="Find (Ctrl+F)">Find</button>
+</div>
+<div id="findbar">
+  <input id="findInput" type="text" placeholder="Find in document">
+  <button id="findPrev">Previous</button>
+  <button id="findNext">Next</button>
+  <span id="findCount" class="label"></span>
+  <span class="spacer" style="flex:1"></span>
+  <button id="findClose" title="Close (Esc)">✕</button>
+</div>
+<div id="viewer" tabindex="-1">
+  <div id="pages"></div>
+  <div id="welcome">
+    <div>Open a PDF to fill and sign</div>
+    <button id="welcomeOpen">Open PDF</button>
+    <div class="hint">or drag a PDF onto this window · files stay on this computer, nothing is uploaded</div>
+  </div>
+</div>
+<div id="status"><span id="statusMsg" class="msg"></span><span class="label">Folio PDF __VERSION__</span></div>
+<input id="fileInput" type="file" accept="application/pdf,.pdf" hidden>
+
+<dialog id="sigDialog">
+  <div class="dlg">
+    <h2>Create signature</h2>
+    <div class="tabs">
+      <button data-tab="draw" class="on">Draw</button>
+      <button data-tab="type">Type</button>
+      <button data-tab="image">Image</button>
+    </div>
+    <div class="tabpane on" id="tab-draw">
+      <canvas id="drawPad"></canvas>
+      <div class="row"><span class="label">Pen</span><input id="penWidth" type="range" min="1" max="8" value="3"><span class="grow"></span><button id="clearPad">Clear</button></div>
+    </div>
+    <div class="tabpane" id="tab-type">
+      <input id="typeName" type="text" placeholder="Type your name">
+      <select id="typeFont"></select>
+      <div class="preview" id="typePreview"></div>
+    </div>
+    <div class="tabpane" id="tab-image">
+      <input id="imageFile" type="file" accept="image/png,image/jpeg,image/bmp">
+      <label class="row"><input id="whiten" type="checkbox" checked> Make white background transparent</label>
+      <div class="preview" id="imagePreview">No image chosen</div>
+    </div>
+    <div class="row">
+      <span class="label">Ink</span>
+      <label><input type="radio" name="ink" value="black" checked> Black</label>
+      <label><input type="radio" name="ink" value="blue"> Blue</label>
+      <span class="grow"></span>
+      <label><input id="remember" type="checkbox" checked> Save for reuse</label>
+      <span id="rememberNote" class="note"></span>
+    </div>
+    <div class="note">This places an image of your signature. It is not a certificate-based digital signature.</div>
+    <div class="row"><span id="sigError" class="note" style="color:#b91c1c"></span><span class="grow"></span>
+      <button id="sigCancel">Cancel</button><button id="sigPlace" class="primary">Place</button></div>
+  </div>
+</dialog>
+<script type="module">
+__JS__
+</script>
+</body>
+</html>
