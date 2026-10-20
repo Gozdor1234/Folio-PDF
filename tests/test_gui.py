@@ -139,7 +139,9 @@ win.grab().save(os.path.join(out, "screenshot_page1.png"))
 dest = os.path.join(out, "form_filled.pdf")
 QFileDialog.getSaveFileName = staticmethod(lambda *a, **k: (dest, "PDF files (*.pdf)"))
 check(win.save_as(), "save as succeeds")
-check(win.path == dest and not view.modified, "reopened saved copy, clean state")
+same = os.path.normcase(os.path.abspath(win.path)) == os.path.normcase(os.path.abspath(dest))
+check(same, f"reopened the saved copy ({win.path})")
+check(not view.modified, "clean state after save as")
 
 d = pymupdf.open(dest)
 vals = {}
